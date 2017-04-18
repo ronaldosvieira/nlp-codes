@@ -4,10 +4,11 @@
 import sys
 
 def reduction(dataset, word):
-    matches = [suffix for suffix in dataset.keys() 
-        if word[-len(suffix):] == suffix 
-            and word not in dataset[suffix][2]
-            and len(word[:-len(suffix)]) >= dataset[suffix][1]]
+    matches = [suffix 
+        for suffix in dataset.keys() 
+            if word[-len(suffix):] == suffix 
+                and word not in dataset[suffix][2]
+                and len(word[:-len(suffix)]) >= dataset[suffix][1]]
     
     if matches:
         suffix = matches[0]
