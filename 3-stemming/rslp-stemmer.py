@@ -3,25 +3,33 @@
 
 import sys
 
-def plural_reduction(word):
-    plural = {'ns': ('m', 1, [])}
-    
-    matches = [suffix for suffix in plural.keys() 
-        if word[-len(suffix):] == suffix and word not in plural[suffix][2]]
+def reduction(dataset, word):
+    matches = [suffix for suffix in dataset.keys() 
+        if word[-len(suffix):] == suffix 
+            and word not in dataset[suffix][2]
+            and len(word[:-len(suffix)]) >= dataset[suffix][1]]
     
     if matches:
         suffix = matches[0]
         
-        word = word[:-len(suffix)] + plural[suffix][0]
+        word = word[:-len(suffix)] + dataset[suffix][0]
     
     return word
+    
+def plural_reduction(word):
+    plural = {'ns': ('m', 1, [])}
+    
+    return reduction(plural, word)
 
 def feminine_reduction(word):
     return word
+    
 def augmentative_reduction(word):
     return word
+    
 def adverb_reduction(word):
     return word
+    
 def noun_reduction(word):
     return word
 
