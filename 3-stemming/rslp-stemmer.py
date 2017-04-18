@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+from read_rule import rule
 
 def reduction(dataset, word):
     matches = [suffix 
@@ -18,33 +19,33 @@ def reduction(dataset, word):
     return word
     
 def plural_reduction(word):
-    plural = {'ns': ('m', 1, [])}
-    
+    plural = rule("rules/step0.pt")
+    print(plural)
     return reduction(plural, word)
 
 def feminine_reduction(word):
-    return word
+    return reduction({}, word)
     
 def augmentative_reduction(word):
-    return word
+    return reduction({}, word)
     
 def adverb_reduction(word):
-    return word
+    return reduction({}, word)
     
 def noun_reduction(word):
-    return word
+    return reduction({}, word)
 
 def suffix_removed(word):
-    return word
+    return reduction({}, word)
 
 def verb_reduction(word):
-    return word
+    return reduction({}, word)
 
 def remove_vowel(word):
-    return word
+    return reduction({}, word)
 
 def remove_accents(word):
-    return word
+    return reduction({}, word)
 
 def init():
     for line in sys.stdin:
