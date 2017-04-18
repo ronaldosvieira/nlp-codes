@@ -11,7 +11,7 @@ patterns = {
     r'[aA]bril|[mM]aio|[jJ]unho|[aA]gosto|[sS]etembro|[oO]utubro|'
     r'[nN]ovembro|[dD]ezembro)(\s*de\s*[0-9]{2,4})?')
   ],
-  'endereco': r'[rR]ua \w+, \d+',
+  'endereco': r'[rR]ua\s*(d[eoa]s?)?\s*\w+(,\s*\d+)?',
   'telefone': r'(\(\d{2}\))?\s*\d?\s*\d{4}\s*-?\s*\d{4}'
 }
 
