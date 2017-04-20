@@ -19,30 +19,28 @@ def reduction(dataset, word):
     return word
     
 def plural_reduction(word):
-    plural = rule("rules/step0.pt")
-    print(plural)
-    return reduction(plural, word)
+    return reduction(rule("rules/step0.pt"), word)
 
 def feminine_reduction(word):
-    return reduction({}, word)
+    return reduction(rule("rules/step1.pt"), word)
     
 def augmentative_reduction(word):
-    return reduction({}, word)
+    return reduction(rule("rules/step3.pt"), word)
     
 def adverb_reduction(word):
-    return reduction({}, word)
+    return reduction(rule("rules/step2.pt"), word)
     
 def noun_reduction(word):
-    return reduction({}, word)
+    return reduction(rule("rules/step4.pt"), word)
 
-def suffix_removed(word):
-    return reduction({}, word)
+def suffix_removed(new_word, old_word):
+    return new_word != old_word
 
 def verb_reduction(word):
-    return reduction({}, word)
+    return reduction(rule("rules/step5.pt"), word)
 
 def remove_vowel(word):
-    return reduction({}, word)
+    return reduction(rule("rules/step6.pt"), word)
 
 def remove_accents(word):
     return reduction({}, word)
@@ -63,20 +61,21 @@ def init():
                 word = feminine_reduction(word)
                   
             word = augmentative_reduction(word)
-            word = adverb_reduction(word)
-            word = noun_reduction(word)
+            old_word = adverb_reduction(word)
+            new_word = noun_reduction(old_word)
             
-            if not suffix_removed(word):
-                word = verb_reduction(word)
+            if not suffix_removed(new_word, old_word):
+                old_word = new_word
+                new_word = verb_reduction(new_word)
                 
-                if not suffix_removed(word):
-                    word = remove_vowel(word)
+                if not suffix_removed(new_word, old_word):
+                    new_word = remove_vowel(new_word)
                     
-            word = remove_accents(word)
+            new_word = remove_accents(new_word)
             
-            stemmed_words.append(word)
+            stemmed_words.append(new_word)
             
-        print(stemmed_words)
+        print(''.join(stemmed_words))
         
 if __name__ == '__main__':
 	init()
