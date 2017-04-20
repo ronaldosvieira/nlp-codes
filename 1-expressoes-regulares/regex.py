@@ -25,3 +25,14 @@ for line in sys.stdin:
   line = re.sub(patterns['num'], '_NUM_', line)
   
   print(line)
+  
+  
+# regexList = []
+# Date Regex
+# regexList.append( (r"\d{1,2}(\sde\s(\w+|\d{1,2})(\sde\s(\d{4}|\d{2}))?|\/\d{1,2}(\/(\d{4}|\d{2}))?)", "_DATA_") )
+# Fone Regex
+# regexList.append( (r"((\(\d{2}\))|(\d{2}))\ ?\d{4,5}[-\ ]?\d{4}", "_TELEFONE_") )
+# Address Regex
+# regexList.append( (r"[Rr]ua(\ \w+)+(,?\ ?\d+)?", "_ENDERECO_") )
+# Number Regex
+# regexList.append( (r"\d+[\w%]*", "_NUMERO_") )
