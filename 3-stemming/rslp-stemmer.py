@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import unicodedata
 from read_rule import rule
 
 def reduction(dataset, word):
@@ -43,7 +44,7 @@ def remove_vowel(word):
     return reduction(rule("rules/step6.pt"), word)
 
 def remove_accents(word):
-    return reduction({}, word)
+    return "".join((c for c in unicodedata.normalize('NFD', word) if unicodedata.category(c) != 'Mn'))
 
 def init():
     for line in sys.stdin:
