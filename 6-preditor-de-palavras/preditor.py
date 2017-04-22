@@ -8,6 +8,10 @@ import os.path
 import termios
 import fcntl
 import curses
+from ast import literal_eval
+import operator
+
+model_2_gram = dict()
 
 def tokenize(text):
 	text = re.sub(r"[(\r+)(\n+)(\t+)]", " ", text)
@@ -30,9 +34,6 @@ def sentence_tokenize(text):
 		sentences.append( pre_tokens[p] +  pre_tokens[p+1] )
 	
 	return sentences
-
-def remove_accents(word):
-	return "".join((c for c in unicodedata.normalize('NFD', word) if unicodedata.category(c) != 'Mn'))
 
 def load_dataset(path="dataset/critica/mact01.txt"):
 	try:
@@ -74,26 +75,33 @@ def myGetch():
 def check_models():
 	if not os.path.exists("models/2_grams"):
 		print("Criando modelo para 2_grams")
-		create_model(2)
+		create_model_2_gram()
 		print("Pressione qualquer tecla para continuar")
 		myGetch()
 
 	if not os.path.exists("models/3_grams"):
 		print("Criando modelo para 3_grams")
-		create_model(3)
+		create_model_3_gram()
 		print("Pressione qualquer tecla para continuar")
 		myGetch()
 
 def init_prediction():
+	load_model()
 	c = ""
 	sentence = ""
 	stdscr = curses.initscr()
 	
 	while c != "\n":
 		try:
+			suggs = ""
+			if c == " ":
+				suggs = suggestions(sentence)
+				stdscr.clear()
 			stdscr.addstr(0, 0, "Pressione ENTER para sair")
-			stdscr.addstr(2, 0, "Top Suggestions: {}".format(suggestions()[0:3]))
-			stdscr.addstr(3, 0, "Best Suggestion: {}".format(suggestions()[0:1]))
+			if len(suggs) >= 3:
+				stdscr.addstr(2, 0, "Top Suggestions: {}".format(suggs[0:3]))
+			if len(suggs) >= 1:
+				stdscr.addstr(3, 0, "Best Suggestion: {}".format(suggs[0:1]))
 			stdscr.addstr(5, 0, "Sentence: {}".format(sentence))
 			stdscr.refresh()
 			
@@ -114,12 +122,47 @@ def init_prediction():
 			curses.echo()
 			curses.endwin()
 
-def load_model(path="dataset/models/2_grams"):
-	pass
+def load_model(path="models/2-gram"):
+	if len(model_2_gram) > 0:
+		return model_2_gram
+	
+	file = open(path, "r")
+	lines = file.readlines()
+	file.close()
+	
+	for l in lines:
+		tk = l.split("\t")
+		model_2_gram[literal_eval(tk[0])] = float(tk[1].replace("\n", ""))
+	
+	return model_2_gram
 
 def suggestions(sentence=""):
-	sugg = [["Exemplo1", 0.9], ["Exemplo2", 0.65]]
-	return sugg
+	load_model()
+	tokens = tokenize(sentence)
+	sugg = dict()	
+	
+	if len(tokens) == 0:
+		return sugg
+	
+	list_1 = list()
+	list_2 = list()
+	for k in model_2_gram:
+		if tokens[-1] == k[0]:
+			list_1.append(k)
+		elif len(tokens) >= 2 and tokens[-2] == k[0]:
+			list_2.append(k)
+
+	if len(list_1) > 0:
+		for s in list_1:
+			if model_2_gram[s] > 0.0:
+				sugg[s[1]] = model_2_gram[s]
+	elif len(list_2) > 0:
+		for s in list_2:
+			if model_2_gram[s] > 0.0:
+				sugg[s[1]] = model_2_gram[s]
+	
+	sorted_sugg = sorted(sugg.items(), key=operator.itemgetter(1), reverse=True)
+	return sorted_sugg
 
 def create_model_2_gram(n_datasets=45):
 	
@@ -166,14 +209,14 @@ def create_model_2_gram(n_datasets=45):
 		file.flush()
 	
 	file.close()
-	
+
+def create_model_3_gram():
+	pass
 
 def main():
 	
-	# check_models()
-	# init_prediction()
-	
-	create_model_2_gram(2)
+	check_models()
+	init_prediction()
 	
 
 if __name__ == '__main__':
