@@ -6,14 +6,14 @@ import re
 import unicodedata
 
 def sentence_tokenize(text):
-    tokens = list()
+    sentences = list()
     
     pre_tokens = re.split(r"([\.\;\?\!\:]+)", text)
     
     for p in range(0, len(pre_tokens) - 2, 2):
-        tokens.append( pre_tokens[p] +  pre_tokens[p+1] )
+        sentences.append( pre_tokens[p] +  pre_tokens[p+1] )
     
-    return tokens
+    return sentences
 
 def remove_accents(word):
     return "".join((c for c in unicodedata.normalize('NFD', word) if unicodedata.category(c) != 'Mn'))
