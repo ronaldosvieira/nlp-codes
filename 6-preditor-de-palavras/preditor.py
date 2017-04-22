@@ -12,6 +12,7 @@ from ast import literal_eval
 import operator
 
 model_2_gram = dict()
+model_3_gram = dict()
 
 def tokenize(text):
 	text = re.sub(r"[(\r+)(\n+)(\t+)]", " ", text)
@@ -122,11 +123,11 @@ def init_prediction():
 			curses.echo()
 			curses.endwin()
 
-def load_model(path="models/2-gram"):
-	if len(model_2_gram) > 0:
-		return model_2_gram
+def load_model():
+	if len(model_2_gram) > 0 and len(model_3_gram) > 0:
+		return None
 	
-	file = open(path, "r")
+	file = open("models/2-gram", "r")
 	lines = file.readlines()
 	file.close()
 	
@@ -134,7 +135,13 @@ def load_model(path="models/2-gram"):
 		tk = l.split("\t")
 		model_2_gram[literal_eval(tk[0])] = float(tk[1].replace("\n", ""))
 	
-	return model_2_gram
+	file = open("models/3-gram", "r")
+	lines = file.readlines()
+	file.close()
+	
+	for l in lines:
+		tk = l.split("\t")
+		model_3_gram[literal_eval(tk[0])] = float(tk[1].replace("\n", ""))
 
 def suggestions(sentence=""):
 	load_model()
@@ -146,21 +153,43 @@ def suggestions(sentence=""):
 	
 	list_1 = list()
 	list_2 = list()
-	for k in model_2_gram:
-		if tokens[-1] == k[0]:
-			list_1.append(k)
-		elif len(tokens) >= 2 and tokens[-2] == k[0]:
-			list_2.append(k)
-
-	if len(list_1) > 0:
-		for s in list_1:
-			if model_2_gram[s] > 0.0:
-				sugg[s[1]] = model_2_gram[s]
-	elif len(list_2) > 0:
-		for s in list_2:
-			if model_2_gram[s] > 0.0:
-				sugg[s[1]] = model_2_gram[s]
 	
+	if len(tokens) > 2:
+		print("Usando 3-gram")
+		for k in model_3_gram:
+			if tokens[-2] == k[0] and tokens[-1] == k[1]:
+				list_1.append(k)
+			elif len(tokens) >= 3 and tokens[-3] == k[0] and tokens[-2] == k[1]:
+				list_2.append(k)
+	
+		if len(list_1) > 0:
+			for s in list_1:
+				if model_3_gram[s] > 0.0:
+					sugg[s[2]] = model_3_gram[s]
+		elif len(list_2) > 0:
+			for s in list_2:
+				if model_3_gram[s] > 0.0:
+					sugg[s[2]] = model_3_gram[s]
+	
+	list_1 = list()
+	list_2 = list()
+	if len(tokens) <= 2 or len(sugg) == 0:
+		print("Usando 2-gram")
+		for k in model_2_gram:
+			if tokens[-1] == k[0]:
+				list_1.append(k)
+			elif len(tokens) >= 2 and tokens[-2] == k[0]:
+				list_2.append(k)
+	
+		if len(list_1) > 0:
+			for s in list_1:
+				if model_2_gram[s] > 0.0:
+					sugg[s[1]] = model_2_gram[s]
+		elif len(list_2) > 0:
+			for s in list_2:
+				if model_2_gram[s] > 0.0:
+					sugg[s[1]] = model_2_gram[s]
+		
 	sorted_sugg = sorted(sugg.items(), key=operator.itemgetter(1), reverse=True)
 	return sorted_sugg
 
