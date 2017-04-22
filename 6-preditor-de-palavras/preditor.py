@@ -73,14 +73,14 @@ def myGetch():
 		fcntl.fcntl(fd, fcntl.F_SETFL, oldflags)
 
 def check_models():
-	if not os.path.exists("models/2_grams"):
-		print("Criando modelo para 2_grams")
+	if not os.path.exists("models/2-gram"):
+		print("Criando modelo para 2-gram")
 		create_model_2_gram()
 		print("Pressione qualquer tecla para continuar")
 		myGetch()
 
-	if not os.path.exists("models/3_grams"):
-		print("Criando modelo para 3_grams")
+	if not os.path.exists("models/3-gram"):
+		print("Criando modelo para 3-gram")
 		create_model_3_gram()
 		print("Pressione qualquer tecla para continuar")
 		myGetch()
@@ -210,8 +210,51 @@ def create_model_2_gram(n_datasets=45):
 	
 	file.close()
 
-def create_model_3_gram():
-	pass
+def create_model_3_gram(n_datasets=45):
+	
+	file = open("models/3-gram", "w")
+	model = dict()
+	count = dict()
+	
+	for f in range(1, n_datasets + 1):
+		dataset_path = "dataset/critica/mact" + "%02d" % (f) + ".txt"
+		print("Gerando modelo do dataset: %s" % (dataset_path))
+
+		text = load_dataset(dataset_path)
+		sentences = sentence_tokenize(text)
+		
+		for s in sentences:
+			tokens = tokenize(s)
+			
+			for pc in range(len(tokens) - 1):
+				try:
+					count[(tokens[pc], tokens[pc + 1])] += 1
+				except:
+					count[(tokens[pc], tokens[pc + 1])] = 1
+			
+			inserted = dict()
+			for t1 in range(len(tokens)):
+				for t2 in range(t1 + 1, len(tokens)):
+					
+					occurences = sum(1 for i in range(len(tokens)) if tokens[i:i+3]==[tokens[t1], tokens[t1 + 1], tokens[t2]])
+					key = (tokens[t1], tokens[t1 + 1], tokens[t2])
+
+					try:
+						try:
+							inserted[key]
+						except:
+							model[key] = model[key] + occurences
+							inserted[key] = True
+					except:
+						model[key] = occurences
+						inserted[key] = True
+
+	for m in model:
+		prob = model[m]/count[(m[0], m[1])]
+		file.write(str(m) + "\t" + str(prob) + "\n")
+		file.flush()
+	
+	file.close()
 
 def main():
 	
