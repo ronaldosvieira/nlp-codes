@@ -124,23 +124,31 @@ def suggestions(sentence=""):
 def create_model_2_gram(n_datasets=45):
 	
 	file = open("models/2-gram", "w")
+	model = dict()
+	count = dict()
 	
 	for f in range(1, n_datasets + 1):
 		dataset_path = "dataset/critica/mact" + "%02d" % (f) + ".txt"
 		print("Gerando modelo do dataset: %s" % (dataset_path))
-		
-		model = dict()
+
 		text = load_dataset(dataset_path)
 		sentences = sentence_tokenize(text)
 		
 		for s in sentences:
 			tokens = tokenize(s)
+			
+			for pc in tokens:
+				try:
+					count[pc] += 1
+				except:
+					count[pc] = 1
+				
 			inserted = dict()
 			for t1 in range(len(tokens)):
 				for t2 in range(t1, len(tokens)):
 					
 					occurences = sum(1 for i in range(len(tokens)) if tokens[i:i+2]==[tokens[t1], tokens[t2]])
-					key = tokens[t1] + " -> " + tokens[t2]
+					key = (tokens[t1], tokens[t2])
 					
 					try:
 						try:
@@ -151,10 +159,11 @@ def create_model_2_gram(n_datasets=45):
 					except:
 						model[key] = occurences
 						inserted[key] = True
-		
-		for m in model:
-			file.write(m + " " + str(model[m]) + "\n")
-			file.flush()
+
+	for m in model:
+		prob = model[m]/count[m[0]]
+		file.write(str(m) + "\t" + str(prob) + "\n")
+		file.flush()
 	
 	file.close()
 	
@@ -164,9 +173,8 @@ def main():
 	# check_models()
 	# init_prediction()
 	
-	create_model_2_gram()
+	create_model_2_gram(2)
+	
 
-		
-		
 if __name__ == '__main__':
 	main()
