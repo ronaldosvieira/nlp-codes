@@ -76,7 +76,7 @@ def init():
             
             stemmed_words.append(new_word)
             
-        print(''.join(stemmed_words))
+        print(' '.join(stemmed_words))
         
 if __name__ == '__main__':
 	init()

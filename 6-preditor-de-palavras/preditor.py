@@ -193,7 +193,7 @@ def suggestions(sentence=""):
 	sorted_sugg = sorted(sugg.items(), key=operator.itemgetter(1), reverse=True)
 	return sorted_sugg
 
-def create_model_2_gram(n_datasets=45):
+def create_model_2_gram(n_datasets=15):
 	
 	file = open("models/2-gram", "w")
 	model = dict()
@@ -233,13 +233,13 @@ def create_model_2_gram(n_datasets=45):
 						inserted[key] = True
 
 	for m in model:
-		prob = model[m]/count[m[0]]
+		prob = (1 + model[m])/count[m[0]]
 		file.write(str(m) + "\t" + str(prob) + "\n")
 		file.flush()
 	
 	file.close()
 
-def create_model_3_gram(n_datasets=45):
+def create_model_3_gram(n_datasets=15):
 	
 	file = open("models/3-gram", "w")
 	model = dict()
@@ -279,7 +279,7 @@ def create_model_3_gram(n_datasets=45):
 						inserted[key] = True
 
 	for m in model:
-		prob = model[m]/count[(m[0], m[1])]
+		prob = (1 + model[m])/count[(m[0], m[1])]
 		file.write(str(m) + "\t" + str(prob) + "\n")
 		file.flush()
 	
