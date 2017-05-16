@@ -2,27 +2,21 @@
 # -*- coding: utf-8 -*-
 
 import sys
+from documents import Document, DocRepository
 
 def main():
-    class_probs = dict()
-    amount_docs = 0
+    doc_rep = DocRepository()
     
     for line in sys.stdin:
-        amount_docs += 1
-        
         doc = line.rstrip("\r\n").strip().split(" ")
         cl = doc.pop(0)
         
-        try:
-            class_probs[cl] += 1
-        except:
-            class_probs[cl] = 1
-        
-    for cl in class_probs:
-        class_probs[cl] /= amount_docs
-        
-    print(class_probs)
-
+        doc_rep.add_doc(Document(cl, doc))
+    
+    for cl in doc_rep.get_classes():
+        print(cl)
+        print(doc_rep.class_probs(cl))
+        print(doc_rep.class_vocab(cl))
 
 if __name__ == '__main__':
 	main()
