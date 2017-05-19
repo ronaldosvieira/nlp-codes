@@ -18,6 +18,7 @@ class Model(object):
     def __init__(self):
         self.classes = dict()
         self.docs = list()
+        self.probs = dict()
         
     def get_classes(self):
         return list(self.classes.keys())
@@ -64,6 +65,8 @@ class Model(object):
         
     def add_doc(self, doc):
         if isinstance(doc, Document):
+            self.probs.clear()
+            
             self.docs.append(doc)
             
             cl = doc.get_class()
@@ -84,21 +87,19 @@ class Model(object):
     
     def classify(self, sentence):
         tokens = sentence.rstrip("\r\n").strip().split(" ")
-        
-        probs = dict()
         results = dict()
         
         for cl in self.get_classes():
-            # trocar uso do set por prog. dinâmica :eyes:
             for token in set(tokens):
-                probs[(token, cl)] = self.cond_probs(cl, token)
-                
+                if (token, cl) not in self.probs:
+                    self.probs[(token, cl)] = self.cond_probs(cl, token)
+        
         for cl in self.get_classes():
             results[cl] = math.log(self.class_probs(cl))
             
             for token in tokens:
-                results[cl] += math.log(probs[(token, cl)])
+                results[cl] += math.log(self.probs[(token, cl)])
                 
             results[cl] = math.exp(results[cl])
-        
+
         return results
