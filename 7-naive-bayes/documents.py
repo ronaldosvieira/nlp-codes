@@ -18,7 +18,6 @@ class Model(object):
         self.docs = list()
         
     def get_classes(self):
-        print(self.classes)
         return list(self.classes.keys())
         
     def get_docs(self):
@@ -80,3 +79,24 @@ class Model(object):
                     self.classes[cl]['vocab'][word] = 1
         else:
             raise Exception('not a document bro')
+    
+    def classify(self, sentence):
+        tokens = sentence.rstrip("\r\n").strip().split(" ")
+        
+        probs = dict()
+        results = dict()
+        
+        for cl in self.get_classes():
+            # trocar uso do set por prog. dinâmica :eyes:
+            for token in set(tokens):
+                probs[(token, cl)] = self.cond_probs(cl, token)
+                
+        for cl in self.get_classes():
+            results[cl] = self.class_probs(cl)
+            
+            for token in tokens:
+                results[cl] *= probs[(token, cl)]
+        
+        # todo: usar o caralho do log pra evitar underflow
+        
+        return results
