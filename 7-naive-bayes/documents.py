@@ -12,22 +12,45 @@ class Document(object):
     def get_words(self):
         return self.words
         
-class DocRepository(object):
+class Model(object):
     def __init__(self):
         self.classes = dict()
         self.docs = list()
         
     def get_classes(self):
+        print(self.classes)
         return list(self.classes.keys())
         
     def get_docs(self):
         return self.docs
         
     def class_probs(self, cl):
-        return self.classes[cl]['count'] / self.amount_docs();
+        return self.classes[cl]['doc_count'] / self.amount_docs()
         
-    def class_vocab(self, cl):
-        return self.classes[cl]['vocab'];
+    def vocab(self):
+        vocab = list()
+        
+        [vocab.extend(list(self.classes[cl]['vocab'].keys()))
+            for cl in self.classes]
+            
+        return set(vocab)
+        
+    def word_count(self, cl):
+        return self.classes[cl]['word_count']
+        
+    def cond_probs(self, cl, word):
+        try:
+            word_freq = self.classes[cl]['vocab'][word]
+        except:
+            word_freq = 0
+        
+        word_count = self.word_count(cl)
+            
+        # without laplace smoothing
+        # return word_freq / word_count
+        
+        # with laplace smoothing (add-1)
+        return (word_freq + 1) / (word_count + len(self.vocab()))
         
     def amount_docs(self):
         return len(self.docs)
@@ -36,7 +59,7 @@ class DocRepository(object):
         return len(self.classes.keys())
         
     def __add_class(self, cl):
-        self.classes[cl] = {'count': 0, 'vocab': set()}
+        self.classes[cl] = {'doc_count': 0, 'word_count': 0, 'vocab': dict()}
         
     def add_doc(self, doc):
         if isinstance(doc, Document):
@@ -47,7 +70,13 @@ class DocRepository(object):
             if cl not in self.classes:
                 self.__add_class(cl)
             
-            self.classes[cl]['count'] += 1
-            self.classes[cl]['vocab'].update(doc.get_words())
+            self.classes[cl]['doc_count'] += 1
+            self.classes[cl]['word_count'] += len(doc.get_words())
+            
+            for word in doc.get_words():
+                try:
+                    self.classes[cl]['vocab'][word] += 1
+                except:
+                    self.classes[cl]['vocab'][word] = 1
         else:
             raise Exception('not a document bro')

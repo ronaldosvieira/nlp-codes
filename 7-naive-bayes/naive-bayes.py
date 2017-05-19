@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from documents import Document, DocRepository
+from documents import Document, Model
 
 def main():
-    doc_rep = DocRepository()
+    doc_rep = Model()
     
     for line in sys.stdin:
         doc = line.rstrip("\r\n").strip().split(" ")
@@ -16,7 +16,7 @@ def main():
     for cl in doc_rep.get_classes():
         print(cl)
         print(doc_rep.class_probs(cl))
-        print(doc_rep.class_vocab(cl))
+        print(doc_rep.cond_probs(cl, 'Chinese'))
 
 if __name__ == '__main__':
 	main()
