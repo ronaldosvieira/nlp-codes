@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import math
+
 class Document(object):
     def __init__(self, cl, words):
         self.cl = cl
@@ -92,11 +94,11 @@ class Model(object):
                 probs[(token, cl)] = self.cond_probs(cl, token)
                 
         for cl in self.get_classes():
-            results[cl] = self.class_probs(cl)
+            results[cl] = math.log(self.class_probs(cl))
             
             for token in tokens:
-                results[cl] *= probs[(token, cl)]
-        
-        # todo: usar o caralho do log pra evitar underflow
+                results[cl] += math.log(probs[(token, cl)])
+                
+            results[cl] = math.exp(results[cl])
         
         return results
