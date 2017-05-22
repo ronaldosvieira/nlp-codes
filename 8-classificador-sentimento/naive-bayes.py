@@ -4,16 +4,16 @@
 import sys
 from random import shuffle
 from documents import Document, Model
+from tokenizers import tokenize
 
 def main():
     model = Model()
     docs = list()
     
     for line in sys.stdin:
-        doc = line.rstrip("\r\n").strip().split(" ")
-        cl = doc.pop(0)
+        tokens = tokenize(line)
         
-        docs.append(Document(cl, doc))
+        docs.append(Document(tokens[0], tokens[1:]))
     
     shuffle(docs)
     
