@@ -1,0 +1,12 @@
+not
+no
+dont
+doesnt
+isnt
+arent
+wasnt
+werent
+wont
+havent
+hasnt
+hardly

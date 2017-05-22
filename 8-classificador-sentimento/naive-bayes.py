@@ -5,7 +5,7 @@ import sys
 from random import shuffle
 from documents import Document, Model
 from tokenizers import tokenize
-from preprocessors import sentimentify
+from preprocessors import sentimentify, negation
 
 def main():
     model = Model()
@@ -15,7 +15,7 @@ def main():
     
     if preprocess:
         for line in sys.stdin:
-            tokens = sentimentify(tokenize(line))
+            tokens = negation(sentimentify(tokenize(line)))
             docs.append(Document(tokens[0], set(tokens[1:])))
     else:
         for line in sys.stdin:
