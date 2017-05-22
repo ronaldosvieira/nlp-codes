@@ -56,5 +56,12 @@ def negation(tokens, lex=get_negations()):
 		except:
 			pass # Beleza!
 		
+		if "n't" in tokens[i]:
+			for j in range(i, len(tokens)):
+				if tokens[j] not in ".;?!:":
+					tokens[j] = "not_" + tokens[j]
+				else:
+					break
+		
 	return tokens
 	
