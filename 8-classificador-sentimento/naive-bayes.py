@@ -5,16 +5,18 @@ import sys
 from random import shuffle
 from documents import Document, Model
 from tokenizers import tokenize
+from preprocessors import sentimentify
 
 def main():
     model = Model()
     docs = list()
     
-    preprocess = None
+    preprocess = True
     
     if preprocess:
         for line in sys.stdin:
-            pass
+            tokens = sentimentify(tokenize(line))
+            docs.append(Document(tokens[0], set(tokens[1:])))
     else:
         for line in sys.stdin:
             tokens = tokenize(line)
