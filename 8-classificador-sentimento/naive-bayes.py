@@ -10,10 +10,15 @@ def main():
     model = Model()
     docs = list()
     
-    for line in sys.stdin:
-        tokens = tokenize(line)
-        
-        docs.append(Document(tokens[0], tokens[1:]))
+    preprocess = None
+    
+    if preprocess:
+        for line in sys.stdin:
+            pass
+    else:
+        for line in sys.stdin:
+            tokens = tokenize(line)
+            docs.append(Document(tokens[0], set(tokens[1:])))
     
     shuffle(docs)
     
