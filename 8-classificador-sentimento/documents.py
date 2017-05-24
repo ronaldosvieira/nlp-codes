@@ -110,3 +110,40 @@ class Model(object):
             results[cl] = math.exp(results[cl])
 
         return results
+        
+class Confusion(object):
+    def __init__(self, classes, results):
+        self.classes = classes
+        self.results = results
+        
+        self.classes.sort()
+        self.__confusion = dict()
+        
+        for cl in self.classes:
+            self.__confusion[cl] = dict()
+            
+            for cl2 in classes:
+                self.__confusion[cl][cl2] = 0
+        
+        for truth, predicted in results:
+            self.__confusion[truth][predicted] += 1
+            
+    def __str__(self):
+        out = ""
+        
+        for cl in self.classes:
+            out += "\t'" + cl + "'"
+            
+        out += "\n"
+            
+        for cl in self.classes:
+            out += "'" + cl + "'"
+            
+            for cl2 in self.classes:
+                out += "\t" + str(self.__confusion[cl][cl2])
+                
+            out += "\n"
+            
+        out += "truth x predicted\n"
+            
+        return out

@@ -3,7 +3,7 @@
 
 import sys
 from random import shuffle
-from documents import Document, Model
+from documents import *
 from tokenizers import tokenize
 from preprocessors import sentimentify, negation
 
@@ -35,6 +35,8 @@ def main():
         result = model.classify(" ".join(doc.get_words()))
         
         results.append((max(result, key=result.get), doc.get_class()))
+        
+    print(Confusion(model.get_classes(), results))
 
     precision = sum(1 for res in results if res[0] == res[1])
     
