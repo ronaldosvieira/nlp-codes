@@ -129,7 +129,7 @@ class Confusion(object):
             self.__confusion[truth][predicted] += 1
     
     def __str__(self):
-        out = ""
+        out = "TxP"
         
         for cl in self.classes:
             out += "\t'" + cl + "'"
@@ -143,8 +143,6 @@ class Confusion(object):
                 out += "\t" + str(self.__confusion[cl][cl2])
                 
             out += "\n"
-            
-        out += "truth x predicted\n"
             
         return out
     
