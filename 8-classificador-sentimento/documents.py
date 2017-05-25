@@ -170,3 +170,15 @@ class Confusion(object):
     def accuracy(self):
         return sum(self.__confusion[cl][cl] 
             for cl in self.classes) / len(self.results)
+    
+    def f1(self, cl):
+        p = self.precision(cl)
+        r = self.recall(cl)
+        
+        return (2 * p * r) / (p + r)
+    
+    def macro_f1(self):
+        p = sum(self.precision(cl) for cl in self.classes) / len(self.classes)
+        r = sum(self.recall(cl) for cl in self.classes) / len(self.classes)
+        
+        return (2 * p * r) / (p + r)
