@@ -127,7 +127,7 @@ class Confusion(object):
         
         for truth, predicted in results:
             self.__confusion[truth][predicted] += 1
-            
+    
     def __str__(self):
         out = ""
         
@@ -147,3 +147,28 @@ class Confusion(object):
         out += "truth x predicted\n"
             
         return out
+    
+    def tp(self, cl):
+        return self.__confusion[cl][cl]
+    
+    def tn(self, cl):
+        return sum(self.__confusion[cl2][cl2] 
+            for cl2 in self.classes if cl2 != cl)
+    
+    def fp(self, cl):
+        return sum(self.__confusion[cl2][cl]
+            for cl2 in self.classes if cl2 != cl)
+    
+    def fn(self, cl):
+        return sum(self.__confusion[cl][cl2]
+            for cl2 in self.classes if cl2 != cl)
+    
+    def precision(self, cl):
+        return self.tp(cl) / (self.tp(cl) + self.fp(cl))
+        
+    def recall(self, cl):
+        return self.tp(cl) / (self.tp(cl) + self.fn(cl))
+    
+    def accuracy(self):
+        return sum(self.__confusion[cl][cl] 
+            for cl in self.classes) / len(self.results)

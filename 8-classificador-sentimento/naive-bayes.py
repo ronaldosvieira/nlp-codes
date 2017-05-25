@@ -36,11 +36,15 @@ def main():
         
         results.append((max(result, key=result.get), doc.get_class()))
         
-    print(Confusion(model.get_classes(), results))
-
-    precision = sum(1 for res in results if res[0] == res[1])
+    confusion = Confusion(model.get_classes(), results)
     
-    print("Precision: ", precision / len(results))
+    print(confusion)
+    
+    print("Precision-1: ", confusion.precision('1'))
+    print("Precision-2: ", confusion.precision('2'))
+    print("Precision-3: ", confusion.precision('3'))
+    print("Precision-4: ", confusion.precision('4'))
+    print("Precision-5: ", confusion.precision('5'))
 
 if __name__ == '__main__':
 	main()
