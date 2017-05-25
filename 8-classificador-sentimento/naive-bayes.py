@@ -12,6 +12,7 @@ def main():
     docs = list()
     
     preprocess = True
+    k_fold = 5
     
     if preprocess:
         for line in sys.stdin:
@@ -22,31 +23,25 @@ def main():
             tokens = tokenize(line)
             docs.append(Document(tokens[0], set(tokens[1:])))
     
-    shuffle(docs)
-    
-    train = docs[:int(len(docs) * .8)]
-    test = docs[len(train):]
-    
-    [model.add_doc(doc) for doc in train]
-    
+    # shuffle(docs)
+
     results = list()
+    step = int(len(docs) / k_fold)
     
-    for doc in test:
-        result = model.classify(" ".join(doc.get_words()))
+    for k in range(0, len(docs), step):
+        train = docs[0:k] + docs[k + step:len(docs)]
+        test = docs[k:k + step]
+    
+        [model.add_doc(doc) for doc in train]
         
-        results.append((max(result, key=result.get), doc.get_class()))
-        
+        for doc in test:
+            result = model.classify(" ".join(doc.get_words()))
+            
+            results.append((max(result, key=result.get), doc.get_class()))
+            
     confusion = Confusion(model.get_classes(), results)
     
     print(confusion)
-    print(confusion.mae())
-    print(confusion.rmse())
-    
-    print("Precision-1: ", confusion.precision('1'))
-    print("Precision-2: ", confusion.precision('2'))
-    print("Precision-3: ", confusion.precision('3'))
-    print("Precision-4: ", confusion.precision('4'))
-    print("Precision-5: ", confusion.precision('5'))
 
 if __name__ == '__main__':
 	main()
