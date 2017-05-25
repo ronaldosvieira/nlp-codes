@@ -42,6 +42,8 @@ def main():
     confusion = Confusion(model.get_classes(), results)
     
     print(confusion)
+    print("Accuracy: " + str(confusion.accuracy()))
+    print("Macro F1: " + str(confusion.macro_f1()))
 
 if __name__ == '__main__':
 	main()
