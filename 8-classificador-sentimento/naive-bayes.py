@@ -39,6 +39,8 @@ def main():
     confusion = Confusion(model.get_classes(), results)
     
     print(confusion)
+    print(confusion.mae())
+    print(confusion.rmse())
     
     print("Precision-1: ", confusion.precision('1'))
     print("Precision-2: ", confusion.precision('2'))

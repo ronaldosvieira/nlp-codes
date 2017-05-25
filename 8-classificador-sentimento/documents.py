@@ -182,3 +182,14 @@ class Confusion(object):
         r = sum(self.recall(cl) for cl in self.classes) / len(self.classes)
         
         return (2 * p * r) / (p + r)
+    
+    def mae(self):
+        return sum(math.fabs(float(predicted) - float(truth)) 
+            for truth, predicted in self.results) / len(self.results)
+    
+    def rmse(self):
+        rmse = math.sqrt(sum(math.pow(float(predicted) - float(truth), 2) 
+            for truth, predicted in self.results) / len(self.results))
+        classes = list(map(float, self.classes))
+        
+        return rmse / (max(classes) - min(classes))
