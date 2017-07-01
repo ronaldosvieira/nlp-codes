@@ -16,14 +16,15 @@ def main():
     
     if preprocess:
         for line in sys.stdin:
-            tokens = negation(sentimentify(tokenize(line)))
+            #tokens = negation(sentimentify(tokenize(line)))
+            tokens = sentimentify(tokenize(line))
             docs.append(Document(tokens[0], set(tokens[1:])))
     else:
         for line in sys.stdin:
             tokens = tokenize(line)
             docs.append(Document(tokens[0], set(tokens[1:])))
     
-    # shuffle(docs)
+    shuffle(docs)
 
     results = list()
     step = int(len(docs) / k_fold)
